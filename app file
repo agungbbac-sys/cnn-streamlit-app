@@ -1,0 +1,33 @@
+import streamlit as st
+import numpy as np
+from tensorflow.keras.models import load_model
+from PIL import Image
+
+# =======================================
+# 1. Load model CNN yang sudah dilatih
+# =======================================
+model = load_model('model_cnn.h5')
+
+# =======================================
+# 2. Judul aplikasi
+# =======================================
+st.title("🧠 Image Classification App (CNN)")
+st.write("Upload gambar dan lihat hasil prediksinya menggunakan model CNN yang telah dioptimasi.")
+
+# =======================================
+# 3. Upload gambar
+# =======================================
+uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
+
+if uploaded_file is not None:
+    # Baca dan tampilkan gambar
+    image = Image.open(uploaded_file).convert('L').resize((28, 28))
+    st.image(image, caption="Gambar yang diunggah", use_column_width=True)
+    st.write("")
+
+    # Ubah menjadi array
+    img_array = np.array(image).reshape(1, 28, 28, 1) / 255.0
+
+    # Prediksi
+    prediction = np.argmax(model.predict(img_array))
+    st.success(f"🔍 Hasil Prediksi: {prediction}")
